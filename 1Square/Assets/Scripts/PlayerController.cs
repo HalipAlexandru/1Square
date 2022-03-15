@@ -25,21 +25,21 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
 
-        if (Input.GetKeyDown(KeyCode.D) && !isMoving && isOnGround)
+        if (Input.GetKey(KeyCode.D) && !isMoving && isOnGround)
         {
+            isOnGround = false;
             if (needJumpRight)
                 StartCoroutine(Jump(new Vector3(moveDist, 0)));
             else
-                StartCoroutine(Move(new Vector3(moveDist, 0)));
-            isOnGround = false;
+                StartCoroutine(Move(new Vector3(moveDist, 0))); 
         }
-        if (Input.GetKeyDown(KeyCode.A) && !isMoving && isOnGround)
+        if (Input.GetKey(KeyCode.A) && !isMoving && isOnGround)
         {
+            isOnGround = false;
             if (needJumpLeft)
                 StartCoroutine(Jump(new Vector3(-moveDist, 0)));
             else
                 StartCoroutine(Move(new Vector3(-moveDist, 0)));
-            isOnGround = false;
         }
     }
 
@@ -49,7 +49,6 @@ public class PlayerController : MonoBehaviour
 
         Vector3 origPos = transform.position;
         Vector3 newPos = transform.position + new Vector3(0, jumpDist);
-
         for (float i = 0; i < timeJump; i += Time.deltaTime)
         {
             transform.position = Vector3.Lerp(origPos, newPos, (i / timeMove));
@@ -64,7 +63,6 @@ public class PlayerController : MonoBehaviour
     IEnumerator Move(Vector3 direction)
     {
         isMoving = true;
-
         Vector3 origPos = transform.position;
         Vector3 newPos = transform.position + direction;
 
@@ -78,14 +76,14 @@ public class PlayerController : MonoBehaviour
         }
 
         transform.position = newPos;
-
         isMoving = false;
-
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         isOnGround = true;
+        if (collision.gameObject.tag == "Platform")
+            collision.gameObject.GetComponent<PlatformController>().NumDec();
     }
 
     public void IsLeft(bool state)
