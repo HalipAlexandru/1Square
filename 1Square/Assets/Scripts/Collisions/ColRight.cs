@@ -18,11 +18,13 @@ public class ColRight : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        GetComponentInParent<PlayerController>().IsRight(true);
+        if (collision.gameObject.tag != "Toggle")
+            GetComponentInParent<PlayerController>().IsRight(true);
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        GetComponentInParent<PlayerController>().IsRight(false);
+        if (collision.gameObject.tag != "Toggle")
+            GetComponentInParent<PlayerController>().IsRight(false);
     }
 }

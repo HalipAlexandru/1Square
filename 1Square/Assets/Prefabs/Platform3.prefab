@@ -126,7 +126,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   num: 1
-  destroyTime: 0.5
+  destroyTime: 0.2
+  isLocked: 0
 --- !u!1 &5782221686027108647
 GameObject:
   m_ObjectHideFlags: 0

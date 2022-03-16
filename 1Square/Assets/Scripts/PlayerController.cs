@@ -13,12 +13,17 @@ public class PlayerController : MonoBehaviour
     public bool isOnGround = false;
     public bool needJumpLeft = false;
     public bool needJumpRight = false;
+    public bool needJumpTop = false;
+
+
+    private Vector2 playerStartPos;
     private Rigidbody2D rb; 
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        playerStartPos = gameObject.transform.position;
     }
 
     // Update is called once per frame
@@ -26,19 +31,17 @@ public class PlayerController : MonoBehaviour
     {
 
         if (Input.GetKey(KeyCode.D) && !isMoving && isOnGround)
-        {
-            isOnGround = false;
-            if (needJumpRight)
+        {    
+            if (needJumpRight && !needJumpTop)
                 StartCoroutine(Jump(new Vector3(moveDist, 0)));
-            else
+            else if(!needJumpRight)
                 StartCoroutine(Move(new Vector3(moveDist, 0))); 
         }
         if (Input.GetKey(KeyCode.A) && !isMoving && isOnGround)
         {
-            isOnGround = false;
-            if (needJumpLeft)
+            if (needJumpLeft && !needJumpTop)
                 StartCoroutine(Jump(new Vector3(-moveDist, 0)));
-            else
+            else if (!needJumpLeft)
                 StartCoroutine(Move(new Vector3(-moveDist, 0)));
         }
     }
@@ -62,6 +65,7 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator Move(Vector3 direction)
     {
+        isOnGround = false;
         isMoving = true;
         Vector3 origPos = transform.position;
         Vector3 newPos = transform.position + direction;
@@ -78,12 +82,24 @@ public class PlayerController : MonoBehaviour
         transform.position = newPos;
         isMoving = false;
     }
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
         isOnGround = true;
         if (collision.gameObject.tag == "Platform")
             collision.gameObject.GetComponent<PlatformController>().NumDec();
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.gameObject.tag == "GameOver")
+        {
+            GameObject.FindWithTag("GameManager").GetComponent<GameManager>().Reset();
+        }
+    }
+
+    public void ResetPosition()
+    {
+        gameObject.transform.position = playerStartPos;
     }
 
     public void IsLeft(bool state)
@@ -93,5 +109,10 @@ public class PlayerController : MonoBehaviour
     public void IsRight(bool state)
     {
         needJumpRight = state;
+    }
+
+    public void IsTop(bool state)
+    {
+        needJumpTop = state;
     }
 }

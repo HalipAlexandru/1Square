@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ColLeft : MonoBehaviour
+public class ColTop : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -17,13 +17,13 @@ public class ColLeft : MonoBehaviour
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if(collision.gameObject.tag != "Toggle")
-            GetComponentInParent<PlayerController>().IsLeft(true);
+        if (collision.gameObject.tag != "Toggle")
+            GetComponentInParent<PlayerController>().IsTop(true);
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.tag != "Toggle")
-            GetComponentInParent<PlayerController>().IsLeft(false);
+            GetComponentInParent<PlayerController>().IsTop(false);
     }
 }
