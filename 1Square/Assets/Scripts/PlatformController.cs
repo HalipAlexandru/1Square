@@ -14,7 +14,7 @@ public class PlatformController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        txt = this.gameObject.transform.GetChild(0).GetChild(0).gameObject.GetComponent<TMPro.TextMeshProUGUI>();
+        txt = this.gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<TMPro.TextMeshProUGUI>();
         count = num;
     }
 
@@ -36,6 +36,7 @@ public class PlatformController : MonoBehaviour
         count = num;
     }
 
+    //it disables the sprite renderer first so the player can move off the platform without falling 
     IEnumerator Destroy()
     {
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
@@ -51,6 +52,10 @@ public class PlatformController : MonoBehaviour
     public void LockUnlock(bool toggle)
     {
         isLocked = toggle;
+        if (toggle == true)
+            transform.GetChild(0).gameObject.SetActive(true);
+        else
+            transform.GetChild(0).gameObject.SetActive(false);
     }
 
     public void NumDec()

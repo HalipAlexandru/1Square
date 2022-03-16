@@ -9,12 +9,16 @@ public class PlayerController : MonoBehaviour
     public float centerOffset = 1f;
     public float jumpDist = 2f;
     public float moveDist = 2f;
+    public float raycastDist = 1f;
     public bool isMoving = false;
     public bool isOnGround = false;
-    public bool needJumpLeft = false;
-    public bool needJumpRight = false;
-    public bool needJumpTop = false;
+    
 
+    RaycastHit2D up;
+    RaycastHit2D left;
+    RaycastHit2D right;
+    RaycastHit2D topLeft;
+    RaycastHit2D topRight;
 
     private Vector2 playerStartPos;
     private Rigidbody2D rb; 
@@ -29,19 +33,26 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //raycasts are used to check for platforms around the player
+        up = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.up),raycastDist);
+        left = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.left), raycastDist);
+        right = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.right), raycastDist);
+        topLeft = Physics2D.Raycast(transform.position + new Vector3(0, raycastDist), transform.TransformDirection(new Vector2(-raycastDist, 0)),raycastDist);
+        topRight = Physics2D.Raycast(transform.position + new Vector3(0, raycastDist), transform.TransformDirection(new Vector2(raycastDist, 0)),raycastDist);
+        //DrawRaycast();
 
         if (Input.GetKey(KeyCode.D) && !isMoving && isOnGround)
         {    
-            if (needJumpRight && !needJumpTop)
+            if (right && !up && !topRight)
                 StartCoroutine(Jump(new Vector3(moveDist, 0)));
-            else if(!needJumpRight)
+            else if(!right)
                 StartCoroutine(Move(new Vector3(moveDist, 0))); 
         }
         if (Input.GetKey(KeyCode.A) && !isMoving && isOnGround)
         {
-            if (needJumpLeft && !needJumpTop)
+            if (left && !up && !topLeft)
                 StartCoroutine(Jump(new Vector3(-moveDist, 0)));
-            else if (!needJumpLeft)
+            else if (!left)
                 StartCoroutine(Move(new Vector3(-moveDist, 0)));
         }
     }
@@ -70,6 +81,7 @@ public class PlayerController : MonoBehaviour
         Vector3 origPos = transform.position;
         Vector3 newPos = transform.position + direction;
 
+        //the pivot determines the shape of the path
         Vector3 pivot = (origPos + newPos) / 2f;
         pivot -= new Vector3(0, centerOffset);
 
@@ -82,13 +94,15 @@ public class PlayerController : MonoBehaviour
         transform.position = newPos;
         isMoving = false;
     }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         isOnGround = true;
         if (collision.gameObject.tag == "Platform")
             collision.gameObject.GetComponent<PlatformController>().NumDec();
     }
-
+    
+    //if the player falls off the level is reset
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.tag == "GameOver")
@@ -102,17 +116,13 @@ public class PlayerController : MonoBehaviour
         gameObject.transform.position = playerStartPos;
     }
 
-    public void IsLeft(bool state)
+    void DrawRaycast()
     {
-        needJumpLeft = state;
-    }
-    public void IsRight(bool state)
-    {
-        needJumpRight = state;
+        Debug.DrawRay(transform.position, transform.TransformDirection(new Vector2(0, raycastDist)));
+        Debug.DrawRay(transform.position, transform.TransformDirection(new Vector2(-raycastDist, 0)));
+        Debug.DrawRay(transform.position, transform.TransformDirection(new Vector2(raycastDist, 0)));
+        Debug.DrawRay(transform.position + new Vector3(0, raycastDist), transform.TransformDirection(new Vector2(-raycastDist, 0)));
+        Debug.DrawRay(transform.position + new Vector3(0, raycastDist), transform.TransformDirection(new Vector2(raycastDist, 0)));
     }
 
-    public void IsTop(bool state)
-    {
-        needJumpTop = state;
-    }
 }

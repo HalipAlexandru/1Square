@@ -8,6 +8,8 @@ TagManager:
   - Toggle
   - GameOver
   - GameManager
+  - StaticPlatform
+  - PassablePlatform
   layers:
   - Default
   - TransparentFX

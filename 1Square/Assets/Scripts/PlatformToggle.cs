@@ -11,12 +11,6 @@ public class PlatformToggle : MonoBehaviour
         platform.GetComponent<PlatformController>().LockUnlock(true);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void ResetLock()
     {
         gameObject.SetActive(true);
@@ -26,6 +20,7 @@ public class PlatformToggle : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        //unlocks linked platform on collision with the player
         if (collision.gameObject.tag == "Player")
         {
             platform.GetComponent<PlatformController>().LockUnlock(false);
