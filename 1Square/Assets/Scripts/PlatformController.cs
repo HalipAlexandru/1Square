@@ -7,13 +7,13 @@ public class PlatformController : MonoBehaviour
     public int num = 1;
     public float destroyTime = 0.1f;
     public bool isLocked = false;
-
     private int count;
     TMPro.TextMeshProUGUI txt;
-
+    ParticleSystem destroyParticle;
     // Start is called before the first frame update
     void Start()
     {
+        destroyParticle = gameObject.transform.GetChild(2).GetComponent<ParticleSystem>();
         txt = this.gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<TMPro.TextMeshProUGUI>();
         count = num;
     }
@@ -26,6 +26,7 @@ public class PlatformController : MonoBehaviour
         {
             StartCoroutine(Destroy());
         }
+        
     }
 
     public void ResetPlatform()
@@ -39,6 +40,7 @@ public class PlatformController : MonoBehaviour
     //it disables the sprite renderer first so the player can move off the platform without falling 
     IEnumerator Destroy()
     {
+        destroyParticle.Play();
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
         txt.enabled = false;
         yield return new WaitForSeconds(destroyTime);

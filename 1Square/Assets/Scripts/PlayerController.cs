@@ -13,26 +13,32 @@ public class PlayerController : MonoBehaviour
     public bool isMoving = false;
     public bool isOnGround = false;
     
-
+    AudioSource jumpSFX;
+    Animator playerAnimator;
     RaycastHit2D up;
     RaycastHit2D left;
     RaycastHit2D right;
     RaycastHit2D topLeft;
     RaycastHit2D topRight;
 
+    ParticleSystem landingParticle;
     private Vector2 playerStartPos;
     private Rigidbody2D rb; 
 
     // Start is called before the first frame update
     void Start()
     {
+        jumpSFX = transform.GetComponent<AudioSource>();
+        playerAnimator = transform.GetChild(2).GetComponent<Animator>();
+        landingParticle = transform.GetChild(1).GetComponent<ParticleSystem>();
         rb = GetComponent<Rigidbody2D>();
-        playerStartPos = gameObject.transform.position;
+        playerStartPos = transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
+        
         //raycasts are used to check for platforms around the player
         up = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.up),raycastDist);
         left = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.left), raycastDist);
@@ -42,18 +48,28 @@ public class PlayerController : MonoBehaviour
         //DrawRaycast();
 
         if (Input.GetKey(KeyCode.D) && !isMoving && isOnGround)
-        {    
+        {
+            
             if (right && !up && !topRight)
+            {
                 StartCoroutine(Jump(new Vector3(moveDist, 0)));
-            else if(!right)
-                StartCoroutine(Move(new Vector3(moveDist, 0))); 
+            }
+            else if (!right)
+            {
+                StartCoroutine(Move(new Vector3(moveDist, 0)));
+            }
         }
         if (Input.GetKey(KeyCode.A) && !isMoving && isOnGround)
         {
+            
             if (left && !up && !topLeft)
+            {
                 StartCoroutine(Jump(new Vector3(-moveDist, 0)));
+            }
             else if (!left)
+            {
                 StartCoroutine(Move(new Vector3(-moveDist, 0)));
+            }
         }
     }
 
@@ -76,6 +92,7 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator Move(Vector3 direction)
     {
+        playerAnimator.SetTrigger("Jump");
         isOnGround = false;
         isMoving = true;
         Vector3 origPos = transform.position;
@@ -97,6 +114,8 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        jumpSFX.Play();
+        landingParticle.Play();
         isOnGround = true;
         if (collision.gameObject.tag == "Platform")
             collision.gameObject.GetComponent<PlatformController>().NumDec();
@@ -105,7 +124,8 @@ public class PlayerController : MonoBehaviour
     //if the player falls off the level is reset
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.tag == "GameOver")
+        landingParticle.Play();
+        if (collision.gameObject.tag == "GameOver")
         {
             GameObject.FindWithTag("GameManager").GetComponent<GameManager>().Reset();
         }
