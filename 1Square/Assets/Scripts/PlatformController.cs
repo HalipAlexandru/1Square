@@ -12,15 +12,16 @@ public class PlatformController : MonoBehaviour
     private int count;
     private TMPro.TextMeshProUGUI txt;
     private ParticleSystem destroyParticle;
-    // Start is called before the first frame update
+    private GameManager gameMang;
+
     void Start()
     {
+        gameMang = GameObject.FindWithTag("GameManager").gameObject.GetComponent<GameManager>();
         destroyParticle = gameObject.transform.GetChild(2).GetComponent<ParticleSystem>();
         txt = this.gameObject.transform.GetChild(1).GetChild(0).gameObject.GetComponent<TMPro.TextMeshProUGUI>();
         count = num;
     }
 
-    // Update is called once per frame
     void Update()
     {
         txt.text = count.ToString();
@@ -50,7 +51,7 @@ public class PlatformController : MonoBehaviour
         gameObject.GetComponent<SpriteRenderer>().enabled = true;
         txt.enabled = true;
         count = num;
-        GameManager.Instance.PlatformDestroyed();
+        gameMang.PlatformDestroyed();
     }
 
     public void LockUnlock(bool toggle)

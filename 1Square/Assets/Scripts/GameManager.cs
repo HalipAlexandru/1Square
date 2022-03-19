@@ -9,7 +9,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject menu;
     [SerializeField] private GameObject flood;
     [SerializeField] private GameObject levels;
-    public static GameManager Instance;
 
     private TMPro.TextMeshProUGUI floodButtonTxt;
     private FloodMove floodOnOff;
@@ -26,14 +25,9 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        SceneManager.sceneLoaded += OnSceneLoaded;
         floodButtonTxt = flood.transform.GetChild(0).GetComponent<TMPro.TextMeshProUGUI>();
         floodOnOff = GameObject.FindWithTag("Flood").GetComponent<FloodMove>();
-        Instance = this;
-    }
-    
-    private void OnEnable()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -41,26 +35,15 @@ public class GameManager : MonoBehaviour
         InitializeScene();
     }
 
-    // Update is called once per frame
     void Update()
     {
 
         //Esc opens menu
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             menu.SetActive(!menu.activeSelf);
             levels.SetActive(false);
         }
-
-        /*
-        if(Input.GetKeyDown(KeyCode.K))
-        {
-            if (SceneManager.GetActiveScene().buildIndex == sceneNum - 1)
-                LoadScene(0);
-            else
-                LoadScene(sceneindex += 1);
-        }
-        */
 
         //Reset when pressing R
         if (Input.GetKeyDown(KeyCode.R))
@@ -79,12 +62,12 @@ public class GameManager : MonoBehaviour
                 {
                     LoadScene(0);
                     menu.SetActive(!menu.activeSelf);
+                    floodOnOff.OnOFF(false);
                 }
                 InitializeScene();
                 
             }
             Reset();
-            //Reset();
         }
     }
 
@@ -97,6 +80,7 @@ public class GameManager : MonoBehaviour
         toggles = GameObject.FindGameObjectsWithTag("Toggle");
         platformNr = platforms.Length;
         platformActive = platforms.Length;
+        
     }
 
     public void StartGame()
@@ -112,7 +96,7 @@ public class GameManager : MonoBehaviour
         levels.SetActive(!levels.activeSelf);
     }
 
-    //resets the player all the platforms and the locks
+    //resets the player, all the platforms and the locks
     public void Reset()
     {
         floodOnOff.Reset();
@@ -151,6 +135,8 @@ public class GameManager : MonoBehaviour
     public void SelectLevel(int lvl)
     {
         LoadScene(lvl - 1);
+        floodOnOff.OnOFF(false);
+        floodOnOff.Reset();
     }
 
     void LoadScene(int sceneNum)

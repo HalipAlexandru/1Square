@@ -23,9 +23,11 @@ public class PlayerController : MonoBehaviour
 
     private ParticleSystem landingParticle;
     private Vector2 playerStartPos;
-    private Rigidbody2D rb; 
+    private Rigidbody2D rb;
 
-    // Start is called before the first frame update
+    Coroutine move;
+    Coroutine jump;
+
     void Start()
     {
         jumpSFX = transform.GetComponent<AudioSource>();
@@ -35,10 +37,8 @@ public class PlayerController : MonoBehaviour
         playerStartPos = transform.position;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
         //raycasts are used to check for platforms around the player
         up = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.up),raycastDist);
         left = Physics2D.Raycast(transform.position, transform.TransformDirection(Vector2.left), raycastDist);
@@ -49,7 +49,6 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.D) && !isMoving && isOnGround)
         {
-            
             if (right && !up && !topRight)
             {
                 StartCoroutine(Jump(new Vector3(moveDist, 0)));
@@ -121,18 +120,22 @@ public class PlayerController : MonoBehaviour
             collision.gameObject.GetComponent<PlatformController>().NumDec();
     }
     
-    //if the player falls off the level is reset
+    //if the player falls off, the level is reset
     private void OnTriggerEnter2D(Collider2D collision)
     {
         landingParticle.Play();
         if (collision.gameObject.tag == "Flood")
         {
+            StopAllCoroutines();
+            isMoving = false;
             GameObject.FindWithTag("GameManager").GetComponent<GameManager>().Reset();
         }
     }
 
     public void ResetPosition()
     {
+        StopAllCoroutines();
+        isMoving = false;
         gameObject.transform.position = playerStartPos;
     }
 
