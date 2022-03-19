@@ -1,20 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Rendering.Universal;
 using UnityEngine;
 
 public class PlatformToggle : MonoBehaviour
 {
-    public GameObject platform;
+    [SerializeField] private GameObject platform;
+    [SerializeField] private Color colour;
+
+    private PlatformController controller;
     // Start is called before the first frame update
     void Start()
     {
-        platform.GetComponent<PlatformController>().LockUnlock(true);
+        controller = platform.GetComponent<PlatformController>();
+        transform.GetComponent<SpriteRenderer>().color = colour;
+        transform.GetChild(0).transform.GetComponent<Light2D>().color = colour;
+        controller.LockUnlock(true);
+        controller.ChangeColour(colour);
     }
 
     public void ResetLock()
     {
         gameObject.SetActive(true);
-        platform.GetComponent<PlatformController>().LockUnlock(true);
+        controller.LockUnlock(true);
     }
 
 
@@ -23,7 +31,7 @@ public class PlatformToggle : MonoBehaviour
         //unlocks linked platform on collision with the player
         if (collision.gameObject.tag == "Player")
         {
-            platform.GetComponent<PlatformController>().LockUnlock(false);
+            controller.LockUnlock(false);
             gameObject.SetActive(false);
         }
     }

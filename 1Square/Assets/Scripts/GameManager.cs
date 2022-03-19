@@ -5,36 +5,29 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject menu;
-    public GameObject levels;
+    [SerializeField] private GameObject menu;
+    [SerializeField] private GameObject levels;
     public static GameManager Instance;
 
+    private int platformNr;
+    private int platformActive;
     private GameObject[] platforms;
     private GameObject[] toggles;
-    int platformNr;
-    int platformActive;
 
-
-    int sceneNum;
-    int sceneindex;
-
+    private int sceneNum;
+    private int sceneindex;
     private void Awake()
     {
         Instance = this;
     }
-
-    // Start is called before the first frame update
-    void Start()
+    
+    private void OnEnable()
     {
-        sceneNum = SceneManager.sceneCountInBuildSettings;
-        sceneindex = SceneManager.GetActiveScene().buildIndex;
-
-        platforms = GameObject.FindGameObjectsWithTag("Platform");
-        toggles = GameObject.FindGameObjectsWithTag("Toggle");
-        platformNr = platforms.Length;
-        platformActive = platforms.Length;
-
-        
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        InitializeScene();
     }
 
     // Update is called once per frame
@@ -45,6 +38,7 @@ public class GameManager : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Escape))
         {
             menu.SetActive(!menu.activeSelf);
+            levels.SetActive(false);
         }
 
         /*
@@ -63,12 +57,13 @@ public class GameManager : MonoBehaviour
 
         if (platformActive == 0)
         {
-            if(menu.activeSelf)
+            if (menu.activeSelf)
             {
                 //The player can still play the game while the menu is up but it will not progress to the next level
                 Reset();
             }
             else
+            {
                 if (SceneManager.GetActiveScene().buildIndex != sceneNum - 1)
                 {
                     LoadScene(sceneindex += 1);
@@ -76,11 +71,24 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     LoadScene(0);
+                    menu.SetActive(!menu.activeSelf);
                 }
+                InitializeScene();
+            }
             //Reset();
         }
     }
 
+    void InitializeScene()
+    {
+        sceneNum = SceneManager.sceneCountInBuildSettings;
+        sceneindex = SceneManager.GetActiveScene().buildIndex;
+
+        platforms = GameObject.FindGameObjectsWithTag("Platform");
+        toggles = GameObject.FindGameObjectsWithTag("Toggle");
+        platformNr = platforms.Length;
+        platformActive = platforms.Length;
+    }
 
     public void StartGame()
     {

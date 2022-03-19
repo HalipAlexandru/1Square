@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SnapToGrid : MonoBehaviour
 {
-    public Vector2 grid =  new Vector2(1,1);
+    [SerializeField] private Vector2 grid =  new Vector2(1,1);
 
     private void OnDrawGizmos()
     {

@@ -4,24 +4,24 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float timeMove = 0.5f;
-    public float timeJump = 0.2f;
-    public float centerOffset = 1f;
-    public float jumpDist = 2f;
-    public float moveDist = 2f;
-    public float raycastDist = 1f;
-    public bool isMoving = false;
-    public bool isOnGround = false;
-    
-    AudioSource jumpSFX;
-    Animator playerAnimator;
-    RaycastHit2D up;
-    RaycastHit2D left;
-    RaycastHit2D right;
-    RaycastHit2D topLeft;
-    RaycastHit2D topRight;
+    [SerializeField] private float timeMove = 0.5f;
+    [SerializeField] private float timeJump = 0.2f;
+    [SerializeField] private float centerOffset = 1f;
+    [SerializeField] private float jumpDist = 2f;
+    [SerializeField] private float moveDist = 2f;
+    [SerializeField] private float raycastDist = 1f;
+    [SerializeField] private bool isMoving = false;
+    [SerializeField] private bool isOnGround = false;
 
-    ParticleSystem landingParticle;
+    private AudioSource jumpSFX;
+    private Animator playerAnimator;
+    private RaycastHit2D up;
+    private RaycastHit2D left;
+    private RaycastHit2D right;
+    private RaycastHit2D topLeft;
+    private RaycastHit2D topRight;
+
+    private ParticleSystem landingParticle;
     private Vector2 playerStartPos;
     private Rigidbody2D rb; 
 

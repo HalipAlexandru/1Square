@@ -4999,7 +4999,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c312f184c440cc4fb2d3319bb9ddcf8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  num: 3
+  num: 1
   destroyTime: 0.2
   isLocked: 0
 --- !u!114 &-8718150074623249585

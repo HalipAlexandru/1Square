@@ -1,15 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Rendering.Universal;
 using UnityEngine;
 
 public class PlatformController : MonoBehaviour
 {
-    public int num = 1;
-    public float destroyTime = 0.1f;
-    public bool isLocked = false;
+    [SerializeField] private int num = 1;
+    [SerializeField] private float destroyTime = 0.1f;
+    [SerializeField] private bool isLocked = false;
+
     private int count;
-    TMPro.TextMeshProUGUI txt;
-    ParticleSystem destroyParticle;
+    private TMPro.TextMeshProUGUI txt;
+    private ParticleSystem destroyParticle;
     // Start is called before the first frame update
     void Start()
     {
@@ -58,6 +60,13 @@ public class PlatformController : MonoBehaviour
             transform.GetChild(0).gameObject.SetActive(true);
         else
             transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+    public void ChangeColour(Color colour)
+    {
+        Debug.Log(colour);
+        transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = colour;
+        transform.GetChild(0).GetChild(0).transform.GetComponent<Light2D>().color = colour;
     }
 
     public void NumDec()
