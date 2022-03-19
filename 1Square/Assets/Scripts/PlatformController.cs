@@ -64,7 +64,6 @@ public class PlatformController : MonoBehaviour
 
     public void ChangeColour(Color colour)
     {
-        Debug.Log(colour);
         transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = colour;
         transform.GetChild(0).GetChild(0).transform.GetComponent<Light2D>().color = colour;
     }

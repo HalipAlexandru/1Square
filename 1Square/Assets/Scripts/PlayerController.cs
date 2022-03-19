@@ -125,7 +125,7 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         landingParticle.Play();
-        if (collision.gameObject.tag == "GameOver")
+        if (collision.gameObject.tag == "Flood")
         {
             GameObject.FindWithTag("GameManager").GetComponent<GameManager>().Reset();
         }

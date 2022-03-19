@@ -2,22 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using UnityEngine.Rendering.Universal;
 public class GameManager : MonoBehaviour
 {
+    //MOVE TO A UI SCRIPT
     [SerializeField] private GameObject menu;
+    [SerializeField] private GameObject flood;
     [SerializeField] private GameObject levels;
     public static GameManager Instance;
 
+    private TMPro.TextMeshProUGUI floodButtonTxt;
+    private FloodMove floodOnOff;
+    private bool floodState;
+
     private int platformNr;
     private int platformActive;
+   
     private GameObject[] platforms;
     private GameObject[] toggles;
 
     private int sceneNum;
     private int sceneindex;
+
     private void Awake()
     {
+        floodButtonTxt = flood.transform.GetChild(0).GetComponent<TMPro.TextMeshProUGUI>();
+        floodOnOff = GameObject.FindWithTag("Flood").GetComponent<FloodMove>();
         Instance = this;
     }
     
@@ -25,6 +35,7 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
+
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         InitializeScene();
@@ -57,16 +68,12 @@ public class GameManager : MonoBehaviour
 
         if (platformActive == 0)
         {
-            if (menu.activeSelf)
-            {
-                //The player can still play the game while the menu is up but it will not progress to the next level
-                Reset();
-            }
-            else
-            {
+            if (!menu.activeSelf)
+            { 
                 if (SceneManager.GetActiveScene().buildIndex != sceneNum - 1)
                 {
                     LoadScene(sceneindex += 1);
+                    
                 }
                 else
                 {
@@ -74,7 +81,9 @@ public class GameManager : MonoBehaviour
                     menu.SetActive(!menu.activeSelf);
                 }
                 InitializeScene();
+                
             }
+            Reset();
             //Reset();
         }
     }
@@ -93,6 +102,8 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         menu.SetActive(!menu.activeSelf);
+        floodOnOff.OnOFF(floodState);
+        Reset();
     }
 
     public void Back()
@@ -104,7 +115,7 @@ public class GameManager : MonoBehaviour
     //resets the player all the platforms and the locks
     public void Reset()
     {
-        
+        floodOnOff.Reset();
         GameObject.FindWithTag("Player").GetComponent<PlayerController>().ResetPosition();
         for (int i = 0; i < platforms.Length; i++)
         {
@@ -115,6 +126,20 @@ public class GameManager : MonoBehaviour
             toggles[i].GetComponent<PlatformToggle>().ResetLock();
         }
         platformActive = platformNr;
+    }
+
+    public void FloodState()
+    {
+        if(floodButtonTxt.text == "Flood : OFF")
+        {
+            floodButtonTxt.text = "Flood : ON";
+            floodState = true;
+        }
+        else
+        {
+            floodButtonTxt.text = "Flood : OFF";
+            floodState = false;
+        }
     }
 
     public void PlatformDestroyed()
